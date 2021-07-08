@@ -7,9 +7,10 @@ output: html_document
 改行する時は1行空行を作る（下記参照）
 -->
 
-# 系統名・薬剤名
+# Insect Strain Name
+# Test Cemical Name & Dose (LD50 or LC50)
 
-# その他コメント
+# Other comments
 
 ```{r, echo=FALSE}
 # 手動設定　X軸の範囲と目盛り(対数なので0は指定できない)
@@ -37,10 +38,11 @@ library(MASS)
 ```{r, echo=FALSE}
 
 
-filename  <- "data.txt"
+filename  <- "data.tsv"
 
 # ファイル名を選択したい場合は，下記を有効にする．
-filename <- file.choose()
+# filename <- file.choose()
+
 cat("Data source file: ", filename)
 
 # データはdose,affected,totalの3列(タブ区切り)で貼り付ける．Excelで作った表をコピペでも可能
@@ -78,8 +80,8 @@ raw_probit <- qnorm( affected/total )+5 #y <- qnorm( r/n )+5 プロビット変�
 # Graph
 ```{r,echo=FALSE}
 
-dose <- log10(raw_dose) #対数への変換
-log10x_limit <- log10(x_limit)
+dose <- log10(raw_dose) #試験濃度対数への変換
+log10x_limit <- log10(x_limit) #X軸範囲対数への変換
 
 
 baseplot <- function(){
@@ -89,9 +91,9 @@ baseplot <- function(){
       yaxt = "n",
       xaxt = "n",
       xlim=log10x_limit, # X軸の目盛範囲(log10)　薬量に応じて変える
-      ylim=c(-2.35, 2.35),
+      ylim=c(-2.35, 2.35), # -2.35 < qnorm(0.0094)なので1%-99%の少し外側
       ylab="Mortality rate (%)",
-      xlab="concentration"
+      xlab="Concentration"
   )  
     
   ## 50%ライン

@@ -26,13 +26,15 @@ ORIGINAL PUBLISHED: 1947 (Re-issue PUBLISHED: 2009)
 
 ISBN: 9780521135900
 
-![table2](https://github.com/oskomagata/LD50R/blob/images/Finny2.png)
+<img src="https://github.com/oskomagata/LD50R/blob/images/Finny2.png" width="640px">
 
-![fig8](https://github.com/oskomagata/LD50R/blob/images/Finny8.png)
+<img src="https://github.com/oskomagata/LD50R/blob/images/Finny8.png" width="640px">
 
-The LD50 was estimated 4.86 in Finney 1947, 4.845492 by my script. 
+In Finney 1947, the LD50 was estimated 4.86 4.845492 by my script. 
 
-My Script Graph Example 
 
-![Graph Example](https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png)
+**My Script Graph Example** 
+
+<img src="https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png" width="640px">
+
 

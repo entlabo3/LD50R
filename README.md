@@ -1,6 +1,6 @@
 # LD50R
 
-Lethal Dose 50% calicuration R script for bio assay with insecticide in Rstudio. 
+Lethal Dose calculation R script for bio assay with insecticide in Rstudio. 
 
 ## Files
 
@@ -15,6 +15,27 @@ I checked my script under the environment as below.
   * [MASS Library](https://cran.r-project.org/web/packages/MASS/index.html) Installation is needed.
 * [RStudio Version 1.4.1106](https://www.rstudio.com/)
 
+## Calculation outline
+
+Three columns are need for calculation. Chemical test doses, number of organisms tested for each dose, and number of affected. "Affected" means dead, knockdown, paralysis and more. 
+
+Typical data is as follows. This data was quoted from Fenney1947.
+
+```
+dose  total affected
+10.2  50  44
+7.7 49  42
+5.1 46  24
+3.8 48  16
+2.6 50  6
+0 49  0
+```
+
+This script uses 
+[glm](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm)
+ function in R. The function is used to fit generalized linear models.
+
+The formula is "cbind(affected, total-affected) ~ dose", the error distribution is "binomial" and the link function is "probit".
 
 
 ## Test data from Finney 1947
@@ -31,8 +52,8 @@ ISBN: 9780521135900
 
 <img src="https://github.com/oskomagata/LD50R/blob/images/Finny8.png" width="640px">
 
-In Finney 1947, the LD50 was estimated as 4.86, estimated as 4.845492 by my script. 
-
+In Finney 1947, the LD50 was estimated as 4.86, estimated as 4.845492 by my script.
+The logarithmic standard errors for LD50 concetration wrere estimated 0.0229 in Finney 1947 and 0.02206838 by my script.
 
 **My Script Graph Out Put Example** 
 

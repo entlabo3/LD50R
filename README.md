@@ -15,3 +15,5 @@ I checked my script under the environment as below.
 * [RStudio Version 1.4.1106](https://www.rstudio.com/)
 
 
+[Graph Example](https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png)
+

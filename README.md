@@ -33,7 +33,9 @@ ISBN: 9780521135900
 In Finney 1947, the LD50 was estimated as 4.86, estimated as 4.845492 by my script. 
 
 
-**My Script Graph Example** 
+**My Script Graph Out Put Example** 
+
+X-axis is concentration in logarithmic scale and Y-Asix is Mortarity rate (%) in probit scale. 
 
 <img src="https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png" width="640px">
 

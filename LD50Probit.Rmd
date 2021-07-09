@@ -104,7 +104,8 @@ baseplot <- function(){
       main="Dose-response curve",
       ylab="Mortality rate (%)",
       xlab="Concentration"
-  )  
+  )
+  
     
   ## 50%ライン
   abline(0, 0, lty = 2, col="skyblue")
@@ -119,8 +120,9 @@ baseplot <- function(){
   axis(2,at=y_levels,labels=y_labels,cex.axis=0.6)
   
   ## 横軸対数目盛り
-    x_levels <- log10(x_labels)
-    axis(1,at=x_levels,labels=x_labels,cex.axis=0.6) #cex.axisはフォントの倍率
+  x_levels <- log10(x_labels)
+   #小数点1位まで表示 cex.axisはフォントの倍率
+  axis(1,at=x_levels,labels=sprintf("%.1f",x_labels),cex.axis=0.6)
 }
 
 baseplot()
@@ -168,6 +170,7 @@ cat("LDs and 95% confidential limits")
 results
 
 # 回帰式の係数等表示
+cat("Probit regression Parameters")
 summary(fit.probit)
 
 ```

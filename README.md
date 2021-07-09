@@ -30,7 +30,7 @@ ISBN: 9780521135900
 
 <img src="https://github.com/oskomagata/LD50R/blob/images/Finny8.png" width="640px">
 
-In Finney 1947, the LD50 was estimated 4.86 4.845492 by my script. 
+In Finney 1947, the LD50 was estimated as 4.86, estimated as 4.845492 by my script. 
 
 
 **My Script Graph Example** 

@@ -23,8 +23,8 @@ library(MASS)
 
 ```{r, echo=FALSE}
 # 手動設定　X軸の範囲と目盛り(対数なので0は指定できない)
-x_limit  <- c(40,90) #X軸の軸の範囲
-x_labels <- c(40,50,60,70,80,90) #表示する目盛
+x_limit  <- c(2,12) #X軸の軸の範囲
+x_labels <- c(2,3,4,5,6,8,10) #表示する目盛
 
 ```
 
@@ -102,7 +102,7 @@ baseplot <- function(){
       xlim=log10x_limit, # X軸の目盛範囲(log10)　薬量に応じて変える
       ylim=c(-2.35, 2.35), # -2.35 < qnorm(0.0094)なので1%-99%の少し外側
       main="Dose-response curve",
-      ylab="Mortality rate (%) in Probit scale",
+      ylab="Mortality rate (%)",
       xlab="Concentration"
   )  
     
@@ -145,24 +145,30 @@ lines(d,qnorm(p))
 ```
 
 ```{r Tables, echo=FALSE}
+
+
+
+# グラフにプロットされている点
+cat("Raw data as plotted in graph")
+cbind(raw_data,raw_probit)
  
-## LD1,5,10,20,25,30,40,50,60,70,75,80,90,95,99
-dp = dose.p(fit.probit, p = c(0.01,0.05, 0.1,0.2,0.25,0.3,0.4, 0.5,0.6,0.7,0.75,0.8, 0.9, 0.95,0.99))
+## 値を確認したい死亡率
+p=c(0.01,0.05, 0.1,0.2,0.25,0.3,0.4, 0.5,0.6,0.7,0.75,0.8, 0.9, 0.95,0.99)
+dp = dose.p(fit.probit, p = p)
 
 LD_values <- attributes(dp)$Dose
   
 ## 95%信頼限界個別表示
 dse.pro <- attributes(dp)$SE
-p2.lw.pro <- 10 ^ (dp - dse.pro*1.96)
-p2.up.pro <- 10 ^ (dp + dse.pro*1.96)
+p2.lw.pro <- 10 ^ (dp - dse.pro*1.96) # 1.96は正規分布の5%点
+p2.up.pro <- 10 ^ (dp + dse.pro*1.96) 
 results <- cbind(10 ^ dp, p2.lw.pro, p2.up.pro)
 colnames(results) <- c("LD_Doses","95%CL_Lower", "95%CL_Upper")
+cat("LDs and 95% confidential limits")
+results
 
-# 95%信頼限界表示  
-
-  cbind(raw_data,raw_probit)
-  results
-  summary(fit.probit)
+# 回帰式の係数等表示
+summary(fit.probit)
 
 ```
 

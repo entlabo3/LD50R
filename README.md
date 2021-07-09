@@ -14,6 +14,4 @@ I checked my script under the environment as below.
   * [MASS Library](https://cran.r-project.org/web/packages/MASS/index.html) Installation is needed.
 * [RStudio Version 1.4.1106](https://www.rstudio.com/)
 
-
-[Graph Example](https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png)
-
+![Graph Example](https://github.com/oskomagata/LD50R/blob/images/outputGraph1.png)

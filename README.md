@@ -37,6 +37,8 @@ This script uses
 
 The formula is "cbind(affected, total-affected) ~ dose", the error distribution is "binomial" and the link function is "probit".
 
+If you have tested the dose as 0 and Affected not 0, the mortality rates will be adjusted by Abott's formula for adjust background by the control mortality.
+
 
 ## Test data from Finney 1947
 

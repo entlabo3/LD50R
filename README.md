@@ -1,6 +1,6 @@
 # LD50R
 
-Lethal Dose calculation R script for bio assay with insecticide in Rstudio. 
+Lethal Dose calculation R script for bioassay with insecticide etc. in Rstudio. 
 
 ## Files
 

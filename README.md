@@ -1,6 +1,6 @@
 # LD50R
 
-Lethal Dose calculation R script for bioassay with insecticide etc. in Rstudio. 
+Lethal Dose ([LD50](https://doi.org/10.1007/0-306-48380-7_2343) etc.) calculation R script for bioassay with insecticide etc. in Rstudio. 
 
 ## Files
 
@@ -39,7 +39,7 @@ This script uses
 
 The formula is **"cbind(affected, total-affected) ~ dose"**, the error distribution is **"binomial"** and the link function is **"probit"**.
 
-If you have tested the dose as 0 (control) and the affected was not 0, the mortality rates will be adjusted by Abott's formula for adjust background by the control mortality.
+If you have tested the dose as 0 (control) and the affected was not 0, the mortality rates will be adjusted by [Abott's formula](https://doi.org/10.1007/0-306-48380-7_4) for adjust background by the control mortality.
 
 
 ## Test data from Finney 1947

@@ -9,8 +9,7 @@ library(MASS)
 ```
 
 <!-- 
-レポートに何か表示させるには，白い背景のところに#(半角空ける)の後に続けて書く
-改行する時は1行空行を作る（下記参照）
+Comments for test in Markdown
 -->
 
 ### Insect Strain Name
@@ -22,9 +21,11 @@ library(MASS)
 
 
 ```{r, echo=FALSE}
-# 手動設定　X軸の範囲と目盛り(対数なので0は指定できない)
-x_limit  <- c(1.5,14) #X軸の軸の範囲
-x_labels <- c(2,3,4,5,6,8,10) #表示する目盛
+# X axis range and tick values(labels)
+# The values have to set by yourself, not automatically.
+# The X axis is a logarithmic scale, so X=0 cannot be shown.
+x_limit  <- c(1.5,14) # range
+x_labels <- c(2,3,4,5,6,8,10) # tick values and labels
 
 ```
 
@@ -38,8 +39,8 @@ x_labels <- c(2,3,4,5,6,8,10) #表示する目盛
 
 library(MASS)
 
-# ワーキングディレクトリを設定する
-#setwd("D:\R\github\LD50R")
+# If you need to set the working directory, uncomment next line.
+# setwd("D:\R\github\LD50R")
 
 ```
 
@@ -49,40 +50,48 @@ library(MASS)
 
 filename  <- "data.tsv"
 
-# ファイル名を選択したい場合は，下記を有効にする．
+# If you want to input your data file name by dialog,  uncomment next line.  
 # filename <- file.choose()
 
-# ファイル名の表示
+# Display data file name 
 cat("Data source file: ", filename)
 
-# データはdose,affected,totalの3列(タブ区切り)で貼り付ける．Excelで作った表をコピペでも可能
-# 列名で読み取るので，列名は変更しないこと
-raw_data <- read.table(filename, header=T)
+# The default data file format is tsv.
+# You can create input data file by copy and pasete from Excel etc..
+# The data have to containing three Columns as dose, affected and total.
+# Don't change column names(dose, affected ,total) because they are identified by the name.
+# The order of the columns can be changed.
+# If you want to use csv, you have to change sep character from "\t" to ",".
+raw_data <- read.table(filename, header=T, sep="\t")
+
+# Display data as read.
 raw_data
 
-# コントロール区死亡率の補正（ない場合は無視）
-raw_data <- subset(raw_data, dose >= 0) # 濃度が負の場合、削除
-sorted_data <- order(raw_data$dose) # 濃度順に並べ替え
-raw_data <- raw_data[sorted_data,]  # 濃度順に並べ替え
+# control(background) mortality correction　(ignore if none)
+raw_data <- subset(raw_data, dose >= 0) # If dose is negative, delete the line.
+# Sort by dose
+sorted_data <- order(raw_data$dose) 
+raw_data <- raw_data[sorted_data,]
 
 if (raw_data[1,]$dose == 0) {
-  raw_control <- subset(raw_data, dose == 0) # コントロール抽出
+  raw_control <- subset(raw_data, dose == 0) # Select the control(dose = 0)
   
-  control_mortality <- raw_control$affected / raw_control$total #補正死亡率計算
-  raw_data <- subset(raw_data, dose > 0) # コントロールを計算とグラフ表示の対象から除外
-  rownames(raw_data) <- c(1:nrow(raw_data)) # 行番号付け直し
+  control_mortality <- raw_control$affected / raw_control$total #Calculate control_mortality 
+  raw_data <- subset(raw_data, dose > 0) # Exclude controls from calculation and graph viewing.
+  rownames(raw_data) <- c(1:nrow(raw_data)) # renumbering
 
-  # Abottの補正式で補正する（ただし死亡率が負の場合は0とする）
+  # Abott's correction formula
+  # If the mortality rate is negative, it is set to zero.
   for (i in (1:nrow(raw_data))) {
     raw_data[i,]$affected <- raw_data[i,]$affected - control_mortality * raw_data[1,]$total
     if (raw_data[i,]$affected < 0) {raw_data[i,]$affected <- 0}
   }
 }
 
-raw_dose <- raw_data$dose # 薬量(対数にしない)
-affected <- raw_data$affected # 死亡数
-total <- raw_data$total # 供試個体数
-raw_probit <- qnorm( affected/total )+5 #y <- qnorm( r/n )+5 プロビット変換
+raw_dose <- raw_data$dose # Insecticide dose (not logarithmic)
+affected <- raw_data$affected # Number of affected (deaths etc.)
+total <- raw_data$total # Number of tested in one group (each dose)
+raw_probit <- qnorm( affected/total )+5 #y <- qnorm( r/n )+5 (probit transformation)
 
 ```
 
@@ -90,55 +99,55 @@ raw_probit <- qnorm( affected/total )+5 #y <- qnorm( r/n )+5 プロビット変�
 
 ```{r Graph,echo=FALSE}
 
-dose <- log10(raw_dose) #試験濃度対数への変換
-log10x_limit <- log10(x_limit) #X軸範囲対数への変換
+dose <- log10(raw_dose) #Logarithmic transformation of test dose
+log10x_limit <- log10(x_limit) #Logarithmic transformation of test range
 
 baseplot <- function(){
 
   plot(dose, qnorm(affected/total),
-      cex = 1, # 文字の大きさ
-      yaxt = "n", # y軸をかかない
-      xaxt = "n", # x軸をかかない
-      xlim=log10x_limit, # X軸の目盛範囲(log10)　薬量に応じて変える
-      ylim=c(-2.35, 2.35), # -2.35 < qnorm(0.0094)なので1%-99%の少し外側
+      cex = 1, # font size factor
+      yaxt = "n", # without Y-axis drawing
+      xaxt = "n", # without X-axis drawing
+      xlim=log10x_limit, # X-axis range log10
+      ylim=c(-2.35, 2.35), # -2.35 < qnorm(0.0094), slightly out side of 1%-99% range
       main="Dose-response curve",
       ylab="% Affected",
-      xlab="Concentration"
+      xlab="Dose"
   )
   
     
-  ## 50%ライン
+  # 50% horizontal line
   abline(0, 0, lty = 2, col="skyblue")
-  ## 10%ライン
+  # 10% horizontal line
   abline(qnorm(0.1), 0, lty = 2, col="pink") 
-  ## 90%ライン
+  # 90% horizontal line
   abline(qnorm(0.9), 0, lty = 2, col="pink")
   
-  ## 縦軸probit目盛
+  # Y-axis, probit scale
   y_labels <- c(1,5,10,25,50,75,90,95,99)
   y_levels <- qnorm(y_labels/100)
   axis(2,at=y_levels,labels=y_labels,cex.axis=0.6)
   
-  ## 横軸対数目盛り
+  # X-axis, logarithmic scale
   x_levels <- log10(x_labels)
-   #小数点1位まで表示 cex.axisはフォントの倍率
+  # Display to two places of decimals, cex.axis is font size factor
   axis(1,at=x_levels,labels=sprintf("%.1f",x_labels),cex.axis=0.6)
 }
 
 baseplot()
 
-### プロビット法
+### Probit analysis by glm(Generalized linear model)
 fit.probit <- glm(cbind(affected, total-affected) ~ dose, family=binomial(probit)) 
 
-## 予測値の計算
+## predicted doses
 x <- data.frame(dose = seq(min(dose), max(dose), diff(range(dose))/1000))
 
-# 回帰直線
+# Regression line
 # MASS function: dose.p; Predict Doses for Binomial Assay model 
 d <- dose.p(fit.probit, p = (p <- seq(0.01, 0.99, 0.01)))
 lines(d,qnorm(p))
 
-## (rateに対するdoseの)予測値信頼区間(95%)
+## Predicted value confidence interval(95%) of doses for mortality rates
  dse.pro <- attributes(d)$SE
  p2.lw.pro <- d - dse.pro*1.96
  p2.up.pro <- d + dse.pro*1.96
@@ -149,14 +158,13 @@ lines(d,qnorm(p))
 
 ```{r Tables, echo=FALSE}
 
-# グラフにプロットされている点
 cat("Raw data as plotted in graph")
 cbind(raw_data,raw_probit)
 
-# 値を確認したい死亡率
+# Mortality rate for which you want to check the range of doses
 p=c(0.01,0.05, 0.1,0.2,0.25,0.3,0.4, 0.5,0.6,0.7,0.75,0.8, 0.9, 0.95,0.99)
 
-# このSEは濃度に対するエラーであることに注意
+# Standerd errror for the dose
 cat("Logarithmic LD50 and Standard Error")
 dp50 = dose.p(fit.probit, p = 0.5)
 dp50
@@ -165,17 +173,17 @@ dp50
 cat("LD50 and Standard Error")
 cat(10 ^ dp50, " (",10^(dp50-attributes(dp50)$SE), "to ", 10 ^ (dp50+attributes(dp50)$SE), ")")  # ln10 = 2.3
 
-## 95%信頼限界個別表示
+## Display each 95% confidential limit
 dp = dose.p(fit.probit, p = p)
 dse.pro <- attributes(dp)$SE
-p2.lw.pro <- 10 ^ (dp - dse.pro*1.96) # 1.96は正規分布の5%点
+p2.lw.pro <- 10 ^ (dp - dse.pro*1.96) # 1.96 is the 5%tile point in a normal distribution
 p2.up.pro <- 10 ^ (dp + dse.pro*1.96) 
 results <- cbind(10 ^ dp, p2.lw.pro, p2.up.pro)
 colnames(results) <- c("LD_Doses","95%CL_Lower", "95%CL_Upper")
 cat("LDs and 95% confidential limits")
 results
 
-# 回帰式の係数等表示
+# Display Probit regression Parameters
 cat("Probit regression Parameters")
 summary(fit.probit)
 

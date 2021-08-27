@@ -1,11 +1,12 @@
 ---
-title: "Probit analysis"
+title: "Probit analysis Ver.1.1"
 output: html_document
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(MASS)
+
 ```
 
 <!-- 
@@ -47,7 +48,7 @@ library(MASS)
 
 ```{r, echo=FALSE}
 
-
+#filename  <- "data.txt"
 filename  <- "data.tsv"
 
 # If you want to input your data file name by dialog,  uncomment next line.  
@@ -83,8 +84,10 @@ if (raw_data[1,]$dose == 0) {
   # Abott's correction formula
   # If the mortality rate is negative, it is set to zero.
   for (i in (1:nrow(raw_data))) {
-    raw_data[i,]$affected <- raw_data[i,]$affected - control_mortality * raw_data[1,]$total
-    if (raw_data[i,]$affected < 0) {raw_data[i,]$affected <- 0}
+    if (raw_data[i,]$affected < raw_data[1,]$total) { 
+      raw_data[i,]$affected <- raw_data[i,]$affected - control_mortality * raw_data[1,]$total
+      if (raw_data[i,]$affected < 0) {raw_data[i,]$affected <- 0}
+    }
   }
 }
 
@@ -137,7 +140,7 @@ baseplot <- function(){
 baseplot()
 
 ### Probit analysis by glm(Generalized linear model)
-fit.probit <- glm(cbind(affected, total-affected) ~ dose, family=binomial(probit)) 
+fit.probit <- glm(cbind(round(affected), total-round(affected)) ~ dose, family=binomial(probit)) 
 
 ## predicted doses
 x <- data.frame(dose = seq(min(dose), max(dose), diff(range(dose))/1000))
@@ -159,12 +162,14 @@ lines(d,qnorm(p))
 ```{r Tables, echo=FALSE}
 
 cat("Raw data as plotted in graph")
-cbind(raw_data,raw_probit)
+result_table <- cbind(raw_data,raw_probit)
+colnames(result_table) <- c("dose", "total", "modified_affected", "raw_probit")
+result_table[result_table$raw_probit < qnorm(1) & result_table$raw_probit > 0 ,]
 
 # Mortality rate for which you want to check the range of doses
 p=c(0.01,0.05, 0.1,0.2,0.25,0.3,0.4, 0.5,0.6,0.7,0.75,0.8, 0.9, 0.95,0.99)
 
-# Standerd errror for the dose
+# Standard error for the dose
 cat("Logarithmic LD50 and Standard Error")
 dp50 = dose.p(fit.probit, p = 0.5)
 dp50
